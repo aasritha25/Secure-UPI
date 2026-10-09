@@ -38,10 +38,18 @@ class FraudPredictor:
                 self.feature_names = bundle.get('feature_names', [])
                 self.metrics = bundle.get('metrics', {})
             except Exception as e:
-                print(f"Warning: Failed to load model bundle: {e}. Will retrain.")
-                self._train_and_load()
+                print(f"Warning: Failed to load model bundle: {e}. Will attempt retrain.")
+                try:
+                    self._train_and_load()
+                except Exception as e2:
+                    print(f"Warning: Retrain also failed: {e2}. Using fallback.")
+                    self._init_fallback()
         else:
-            self._train_and_load()
+            try:
+                self._train_and_load()
+            except Exception as e:
+                print(f"Warning: Training failed (read-only filesystem?): {e}. Using fallback.")
+                self._init_fallback()
 
         if os.path.exists(METRICS_PATH):
             with open(METRICS_PATH, 'r', encoding='utf-8') as f:
@@ -59,6 +67,16 @@ class FraudPredictor:
         self.feature_names = bundle['feature_names']
         self.metrics = bundle['metrics']
         self.metrics_summary = metrics_summary
+
+    def _init_fallback(self):
+        """Fallback when model can't be loaded or trained (e.g. read-only Vercel filesystem)."""
+        self.selected_model_name = 'Rule-Based Fallback'
+        self.selected_model = None
+        self.all_models = {}
+        self.pipeline = UPIFeaturePipeline()
+        self.feature_names = []
+        self.metrics = {}
+        self.metrics_summary = {'selected_model': 'Rule-Based Fallback', 'models': {}}
 
     def predict_transaction(self, txn_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -81,14 +99,29 @@ class FraudPredictor:
         }
 
         df_single = pd.DataFrame([input_dict])
-        transformed = self.pipeline.transform(df_single)
 
-        # Get probability from the selected model
-        if hasattr(self.selected_model, 'predict_proba'):
-            fraud_proba = float(self.selected_model.predict_proba(transformed)[0, 1])
+        # Get probability from the selected model (or rule-based fallback)
+        if self.selected_model is None:
+            # Rule-based fallback when ML model is unavailable
+            score = 0.0
+            if input_dict['amount'] > 25000:
+                score += 0.3
+            if input_dict['device_new'] == 1:
+                score += 0.2
+            if input_dict['location_change'] == 1:
+                score += 0.2
+            if input_dict['failed_transactions'] >= 2:
+                score += 0.15
+            if input_dict['is_known_receiver'] == 0:
+                score += 0.15
+            fraud_proba = min(score, 0.99)
         else:
-            pred = self.selected_model.predict(transformed)[0]
-            fraud_proba = float(pred)
+            transformed = self.pipeline.transform(df_single)
+            if hasattr(self.selected_model, 'predict_proba'):
+                fraud_proba = float(self.selected_model.predict_proba(transformed)[0, 1])
+            else:
+                pred = self.selected_model.predict(transformed)[0]
+                fraud_proba = float(pred)
 
         # Calculate risk score (0 - 100)
         risk_score = round(float(fraud_proba * 100), 2)
@@ -111,7 +144,11 @@ class FraudPredictor:
             recommendation = 'High risk detected. Transaction blocked and alert generated.'
 
         # Explainability & Feature Contribution Breakdown
-        reasons, feature_contributions = self._explain_prediction(input_dict, transformed[0], fraud_proba)
+        if self.selected_model is None or not self.feature_names:
+            # Fallback: generate reasons from rules only, no feature contributions
+            reasons, feature_contributions = self._explain_prediction(input_dict, np.zeros(1), fraud_proba)
+        else:
+            reasons, feature_contributions = self._explain_prediction(input_dict, transformed[0], fraud_proba)
 
         return {
             'model_used': self.selected_model_name,

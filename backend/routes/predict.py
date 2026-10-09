@@ -10,7 +10,14 @@ from backend.services.fraud_detector import FraudDetectionService
 from backend.utils.validators import validate_transaction_payload
 
 predict_bp = Blueprint('predict', __name__, url_prefix='/api/predict')
-fraud_service = FraudDetectionService()
+_fraud_service = None
+
+
+def _get_fraud_service():
+    global _fraud_service
+    if _fraud_service is None:
+        _fraud_service = FraudDetectionService()
+    return _fraud_service
 
 
 @predict_bp.route('', methods=['POST'])
@@ -27,7 +34,7 @@ def predict_risk():
         return jsonify({'error': err_msg}), 400
 
     # Execute ML fraud detection
-    analysis_result = fraud_service.analyze_transaction(user, payload)
+    analysis_result = _get_fraud_service().analyze_transaction(user, payload)
 
     return jsonify({
         'transaction_status': analysis_result['prediction'], # Legitimate, Suspicious, Fraudulent

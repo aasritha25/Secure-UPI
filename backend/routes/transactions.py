@@ -14,7 +14,14 @@ from backend.services.fraud_detector import FraudDetectionService
 from backend.utils.validators import validate_transaction_payload
 
 transactions_bp = Blueprint('transactions', __name__, url_prefix='/api/transactions')
-fraud_service = FraudDetectionService()
+_fraud_service = None
+
+
+def _get_fraud_service():
+    global _fraud_service
+    if _fraud_service is None:
+        _fraud_service = FraudDetectionService()
+    return _fraud_service
 
 
 @transactions_bp.route('', methods=['POST'])
@@ -40,7 +47,7 @@ def create_transaction():
     note = str(payload.get('note', '')).strip()
 
     # 1. Run Real-Time ML Fraud Detection
-    analysis = fraud_service.analyze_transaction(user, payload)
+    analysis = _get_fraud_service().analyze_transaction(user, payload)
     fraud_prob = analysis['fraud_probability']
     risk_score = analysis['risk_score']
     risk_level = analysis['risk_level'] # LOW_RISK, MEDIUM_RISK, HIGH_RISK
