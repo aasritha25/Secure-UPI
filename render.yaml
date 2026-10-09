@@ -1,0 +1,25 @@
+# Render Deployment Blueprint Configuration for Secure UPI Platform
+services:
+  - type: web
+    name: secure-upi
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn backend.app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: LOW_RISK_MAX
+        value: "30.0"
+      - key: MEDIUM_RISK_MAX
+        value: "70.0"
+      - key: HIGH_RISK_MIN
+        value: "71.0"
