@@ -58,8 +58,11 @@ def create_app(config_class=Config):
 
     # Database Initialization & Auto-Seeding
     with app.app_context():
-        db.create_all()
-        seed_database()
+        try:
+            db.create_all()
+            seed_database()
+        except Exception as e:
+            print(f"Warning during database initialization: {e}")
 
     # Health & System Status Endpoint
     @app.route('/api/health', methods=['GET'])

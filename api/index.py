@@ -5,7 +5,7 @@ Vercel Serverless Entrypoint for Secure UPI: Machine Learning Fraud Detection Sy
 import os
 import sys
 
-# Add project root to sys.path
+# Ensure project root is in sys.path
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(CURRENT_DIR, '..'))
 
@@ -14,6 +14,6 @@ if ROOT_DIR not in sys.path:
 
 from backend.app import app
 
-# Vercel WSGI entry point
-# Exports the Flask app instance
+# Vercel WSGI entry points
 app = app
+handler = app

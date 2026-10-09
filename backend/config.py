@@ -23,7 +23,14 @@ class Config:
             DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
         SQLALCHEMY_DATABASE_URI = DATABASE_URL
     else:
-        if os.getenv('VERCEL'):
+        # Check if running in a read-only environment or serverless runtime
+        is_serverless = bool(
+            os.getenv('VERCEL') or 
+            os.getenv('VERCEL_ENV') or 
+            os.getenv('AWS_LAMBDA_FUNCTION_NAME') or 
+            not os.access(BASE_DIR, os.W_OK)
+        )
+        if is_serverless:
             DB_PATH = '/tmp/secure_upi.db'
         else:
             DB_PATH = os.path.join(BASE_DIR, 'secure_upi.db')
