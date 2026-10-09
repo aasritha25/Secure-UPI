@@ -18,7 +18,7 @@ from backend.app import app
 class VercelWSGIMiddleware:
     """
     Normalizes WSGI SCRIPT_NAME and PATH_INFO when Vercel routes requests to api/index.py.
-    Handles all variations (/api/index.py/..., /api/..., or /...) so Flask blueprint matching works 100%.
+    Preserves frontend HTML page routes (/alerts, /dashboard, etc.) while prefixing API calls.
     """
 
     def __init__(self, wsgi_app):
@@ -35,13 +35,17 @@ class VercelWSGIMiddleware:
         elif raw_path.startswith('/api/index'):
             raw_path = raw_path[len('/api/index'):] or '/'
 
-        # Prefix known API blueprint routes with /api if missing
-        api_subpaths = (
-            '/auth', '/transactions', '/predict', '/alerts', 
-            '/dashboard/stats', '/admin/stats', '/model/metrics', '/health'
+        # List of frontend page & static asset routes that must NOT be prefixed with /api
+        frontend_pages = (
+            '/', '/login', '/register', '/dashboard', '/transaction', 
+            '/alerts', '/profile', '/admin', '/fraud-analysis'
         )
-        if not raw_path.startswith('/api/') and any(raw_path.startswith(sp) for sp in api_subpaths):
-            raw_path = '/api' + raw_path
+
+        # Preserve frontend HTML pages and static assets
+        if raw_path in frontend_pages or raw_path.startswith('/css/') or raw_path.startswith('/js/'):
+            pass
+        elif not raw_path.startswith('/api/'):
+            raw_path = '/api' + ('' if raw_path.startswith('/') else '/') + raw_path
 
         environ['SCRIPT_NAME'] = ''
         environ['PATH_INFO'] = raw_path
