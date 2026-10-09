@@ -16,12 +16,17 @@ class Config:
     JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'jwt-super-secret-key-secure-upi-auth')
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=int(os.getenv('JWT_EXPIRES_HOURS', 12)))
 
-    # Database Configuration (Defaults to local SQLite, easily switches to MySQL)
+    # Database Configuration (Defaults to local SQLite, easily switches to MySQL or PostgreSQL)
     DATABASE_URL = os.getenv('DATABASE_URL')
     if DATABASE_URL:
+        if DATABASE_URL.startswith("postgres://"):
+            DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
         SQLALCHEMY_DATABASE_URI = DATABASE_URL
     else:
-        DB_PATH = os.path.join(BASE_DIR, 'secure_upi.db')
+        if os.getenv('VERCEL'):
+            DB_PATH = '/tmp/secure_upi.db'
+        else:
+            DB_PATH = os.path.join(BASE_DIR, 'secure_upi.db')
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{DB_PATH}"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
