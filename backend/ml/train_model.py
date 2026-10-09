@@ -17,8 +17,11 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score, roc_auc_score
-from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
+try:
+    from xgboost import XGBClassifier
+    HAS_XGBOOST = True
+except ImportError:
+    HAS_XGBOOST = False
 
 from backend.ml.generate_dataset import generate_upi_dataset
 from backend.ml.preprocess import ALL_MODEL_INPUT_COLUMNS, UPIFeaturePipeline
@@ -75,8 +78,11 @@ def train_and_evaluate():
             class_weight='balanced_subsample',
             random_state=42,
             n_jobs=-1
-        ),
-        'XGBoost': XGBClassifier(
+        )
+    }
+
+    if HAS_XGBOOST:
+        candidate_models['XGBoost'] = XGBClassifier(
             n_estimators=200,
             max_depth=6,
             learning_rate=0.08,
@@ -85,7 +91,6 @@ def train_and_evaluate():
             random_state=42,
             n_jobs=-1
         )
-    }
 
     results = {}
     trained_models = {}
