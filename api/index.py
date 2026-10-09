@@ -14,6 +14,27 @@ if ROOT_DIR not in sys.path:
 
 from backend.app import app
 
-# Vercel WSGI entry points
-app = app
+
+class VercelWSGIMiddleware:
+
+    def __init__(self, wsgi_app):
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        script_name = environ.get('SCRIPT_NAME', '')
+        path_info = environ.get('PATH_INFO', '')
+
+        # When Vercel rewrites /api/* to /api/index.py, SCRIPT_NAME may be '/api' and PATH_INFO '/auth/login'
+        # Combine them so Flask receives '/api/auth/login' as expected by blueprints.
+        if script_name:
+            full_path = script_name + path_info
+            environ['SCRIPT_NAME'] = ''
+            environ['PATH_INFO'] = full_path
+
+        return self.wsgi_app(environ, start_response)
+
+
+# Wrap Flask WSGI app with Vercel path normalizer
+app.wsgi_app = VercelWSGIMiddleware(app.wsgi_app)
 handler = app
+

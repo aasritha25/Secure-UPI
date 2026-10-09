@@ -2,58 +2,13 @@
   "version": 2,
   "functions": {
     "api/index.py": {
-      "includeFiles": "{backend/**,frontend/**}"
+      "includeFiles": [
+        "backend/**",
+        "frontend/**"
+      ]
     }
   },
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/",
-      "destination": "/frontend/index.html"
-    },
-    {
-      "source": "/login",
-      "destination": "/frontend/login.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/frontend/register.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/frontend/dashboard.html"
-    },
-    {
-      "source": "/transaction",
-      "destination": "/frontend/transaction.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/frontend/profile.html"
-    },
-    {
-      "source": "/alerts",
-      "destination": "/frontend/alerts.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/frontend/admin.html"
-    },
-    {
-      "source": "/fraud-analysis",
-      "destination": "/frontend/fraud-analysis.html"
-    },
-    {
-      "source": "/css/(.*)",
-      "destination": "/frontend/css/$1"
-    },
-    {
-      "source": "/js/(.*)",
-      "destination": "/frontend/js/$1"
-    },
     {
       "source": "/(.*)",
       "destination": "/api/index.py"
