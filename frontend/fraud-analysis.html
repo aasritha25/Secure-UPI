@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Fraud Analysis &amp; Explainability | Secure UPI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <div class="brand-logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <div class="brand-title">Secure UPI</div>
+          <div class="brand-subtitle">ML Explainability Center</div>
+        </div>
+      </a>
+      <div class="collapse navbar-collapse" id="mlNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transaction"><i class="fas fa-paper-plane me-1"></i> Make Payment</a></li>
+          <li class="nav-item"><a class="nav-link" href="/alerts"><i class="fas fa-bell me-1"></i> Alerts</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/fraud-analysis"><i class="fas fa-brain me-1"></i> ML Explainability</a></li>
+          <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user-circle me-1"></i> My Profile</a></li>
+        </ul>
+        <button onclick="logoutUser()" class="btn btn-sm btn-outline-danger">
+          <i class="fas fa-sign-out-alt me-1"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container-fluid px-lg-5 py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div>
+        <h3 class="fw-bold text-dark mb-1"><i class="fas fa-brain text-primary me-2"></i>Machine Learning Model Analytics &amp; Explainability</h3>
+        <p class="text-muted small mb-0">Model evaluation metrics, feature importance rankings, and interactive fraud risk simulation.</p>
+      </div>
+      <div>
+        <span class="badge bg-primary px-3 py-2 fs-6">
+          Selected Model: <strong id="analysisSelectedModelBadge">Random Forest</strong>
+        </span>
+      </div>
+    </div>
+
+    <!-- Comparative Model Performance Cards -->
+    <div class="mb-4">
+      <h5 class="fw-bold text-dark mb-3"><i class="fas fa-cubes text-secondary me-2"></i>Model Benchmark Comparison (Academic Evaluation)</h5>
+      <div class="row g-3" id="modelCardsContainer">
+        <div class="col-12 text-center py-4"><span class="spinner-border spinner-border-sm me-2"></span>Loading model evaluations...</div>
+      </div>
+    </div>
+
+    <!-- Feature Importance & Explainability Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-7">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header">
+            <h5><i class="fas fa-chart-bar text-primary me-2"></i>Model Feature Importance Ranking</h5>
+          </div>
+          <div class="fin-card-body" style="height: 380px; position: relative;">
+            <canvas id="featureImportanceCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive Parameter Simulator -->
+      <div class="col-lg-5">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header bg-light">
+            <h5><i class="fas fa-sliders text-warning me-2"></i>Live Anomaly Risk Simulator</h5>
+          </div>
+          <div class="fin-card-body">
+            <p class="text-muted small mb-3">Adjust parameters below to see how the ML model shifts its probability and reason explanations in real time:</p>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small">Amount (₹)</label>
+                <input type="number" id="simAmount" class="form-control form-control-sm" value="25000">
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Avg Amount (₹)</label>
+                <input type="number" id="simAvgAmount" class="form-control form-control-sm" value="1200">
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Hour (0 - 23)</label>
+                <input type="number" id="simTimeOfDay" class="form-control form-control-sm" value="3" min="0" max="23">
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Velocity (Txns/Hr)</label>
+                <input type="number" id="simVelocity" class="form-control form-control-sm" value="5.5" step="0.5">
+              </div>
+              <div class="col-12">
+                <label class="form-label small">Failed PINs</label>
+                <input type="number" id="simFailedPins" class="form-control form-control-sm" value="2" min="0" max="10">
+              </div>
+              <div class="col-6 mt-2">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="simDeviceNew" checked>
+                  <label class="form-check-label small" for="simDeviceNew">New Device</label>
+                </div>
+              </div>
+              <div class="col-6 mt-2">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="simLocationChange" checked>
+                  <label class="form-check-label small" for="simLocationChange">New Location</label>
+                </div>
+              </div>
+            </div>
+
+            <button id="simRunBtn" class="btn btn-fin-primary btn-sm w-100 mb-3">
+              <i class="fas fa-play me-2"></i>Run Interactive Simulation
+            </button>
+
+            <!-- Real-Time Simulator Output Box -->
+            <div class="p-3 bg-light rounded border">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-bold text-muted">Simulation Risk Score:</span>
+                <span id="simScoreValue" class="fs-5 fw-bold text-dark">0%</span>
+              </div>
+              <div class="risk-meter-container mb-2">
+                <div id="simMeterBar" class="risk-meter-bar" style="width: 0%;"></div>
+              </div>
+              <div class="d-flex justify-content-between small mb-2">
+                <span class="text-muted">Probability: <strong id="simProbValue">0%</strong></span>
+                <span id="simBadgeValue"></span>
+              </div>
+              <div class="small fw-semibold text-secondary mb-1">Recommendation:</div>
+              <div id="simRecommendationBox" class="small text-dark fw-bold mb-2"></div>
+
+              <div class="small fw-semibold text-secondary mb-1">Key Factors:</div>
+              <ul id="simReasonsList" class="list-unstyled small mb-0"></ul>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer-custom text-center">
+    <div class="container small text-muted">
+      Secure UPI Academic FinTech System &copy; 2026 | Real-Time Machine Learning Transaction Security
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/fraud-analysis.js"></script>
+</body>
+</html>

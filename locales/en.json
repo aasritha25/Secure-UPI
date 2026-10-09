@@ -1,0 +1,12 @@
+{
+  "login": "Login",
+  "register": "Register",
+  "home": "Home",
+  "dashboard": "Dashboard",
+  "pay": "Pay",
+  "transactions": "Transactions",
+  "alerts": "Alerts",
+  "profile": "Profile",
+  "settings": "Settings",
+  "voiceGuide": "Voice Guide"
+}

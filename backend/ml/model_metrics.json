@@ -1,0 +1,157 @@
+{
+  "dataset_summary": {
+    "total_samples": 10000,
+    "legitimate_count": 9014,
+    "fraudulent_count": 986,
+    "fraud_ratio_pct": 9.86,
+    "test_size": 2000
+  },
+  "selected_model": "Random Forest",
+  "models": {
+    "Logistic Regression": {
+      "accuracy": 0.9995,
+      "precision": 0.9949,
+      "recall": 1.0,
+      "f1_score": 0.9975,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        1802,
+        1,
+        0,
+        197
+      ],
+      "feature_importances": {
+        "amount": 0.4126,
+        "average_amount": 0.4814,
+        "amount_deviation": 1.6269,
+        "transaction_frequency": 0.2646,
+        "time_since_last_transaction": 1.7348,
+        "time_of_day": 0.1302,
+        "account_age_days": 0.2417,
+        "failed_transactions": 1.4975,
+        "transaction_velocity": 5.6179,
+        "location_change": 1.0868,
+        "device_new": 0.9516,
+        "is_known_receiver": 2.3669,
+        "is_unusual_hour": 2.246,
+        "is_high_value_spike": 1.042,
+        "is_rapid_velocity": 0.0048,
+        "txn_type_P2P": 1.5869,
+        "txn_type_P2M": 1.0216,
+        "txn_type_BILL_PAYMENT": 0.657,
+        "txn_type_ONLINE_SHOPPING": 0.5457,
+        "txn_type_INVESTMENT": 0.3911,
+        "txn_type_RECHARGE": 0.1453
+      }
+    },
+    "Random Forest": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        1803,
+        0,
+        0,
+        197
+      ],
+      "feature_importances": {
+        "amount": 0.0421,
+        "average_amount": 0.0016,
+        "amount_deviation": 0.1945,
+        "transaction_frequency": 0.0063,
+        "time_since_last_transaction": 0.0522,
+        "time_of_day": 0.018,
+        "account_age_days": 0.0009,
+        "failed_transactions": 0.1345,
+        "transaction_velocity": 0.309,
+        "location_change": 0.0474,
+        "device_new": 0.0693,
+        "is_known_receiver": 0.0587,
+        "is_unusual_hour": 0.017,
+        "is_high_value_spike": 0.0307,
+        "is_rapid_velocity": 0.0095,
+        "txn_type_P2P": 0.0036,
+        "txn_type_P2M": 0.0031,
+        "txn_type_BILL_PAYMENT": 0.0011,
+        "txn_type_ONLINE_SHOPPING": 0.0003,
+        "txn_type_INVESTMENT": 0.0001,
+        "txn_type_RECHARGE": 0.0001
+      }
+    },
+    "XGBoost": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "roc_auc": 1.0,
+      "confusion_matrix": [
+        1803,
+        0,
+        0,
+        197
+      ],
+      "feature_importances": {
+        "amount": 0.0022,
+        "average_amount": 0.0002,
+        "amount_deviation": 0.0402,
+        "transaction_frequency": 0.0007,
+        "time_since_last_transaction": 0.0041,
+        "time_of_day": 0.0691,
+        "account_age_days": 0.001,
+        "failed_transactions": 0.0049,
+        "transaction_velocity": 0.8333,
+        "location_change": 0.0017,
+        "device_new": 0.0015,
+        "is_known_receiver": 0.0199,
+        "is_unusual_hour": 0.0,
+        "is_high_value_spike": 0.0,
+        "is_rapid_velocity": 0.0,
+        "txn_type_P2P": 0.0212,
+        "txn_type_P2M": 0.0,
+        "txn_type_BILL_PAYMENT": 0.0,
+        "txn_type_ONLINE_SHOPPING": 0.0,
+        "txn_type_INVESTMENT": 0.0,
+        "txn_type_RECHARGE": 0.0
+      }
+    }
+  },
+  "feature_names": [
+    "amount",
+    "average_amount",
+    "amount_deviation",
+    "transaction_frequency",
+    "time_since_last_transaction",
+    "time_of_day",
+    "account_age_days",
+    "failed_transactions",
+    "transaction_velocity",
+    "location_change",
+    "device_new",
+    "is_known_receiver",
+    "is_unusual_hour",
+    "is_high_value_spike",
+    "is_rapid_velocity",
+    "txn_type_P2P",
+    "txn_type_P2M",
+    "txn_type_BILL_PAYMENT",
+    "txn_type_ONLINE_SHOPPING",
+    "txn_type_INVESTMENT",
+    "txn_type_RECHARGE"
+  ],
+  "thresholds": {
+    "low_risk": [
+      0,
+      30
+    ],
+    "medium_risk": [
+      31,
+      70
+    ],
+    "high_risk": [
+      71,
+      100
+    ]
+  }
+}

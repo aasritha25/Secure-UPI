@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Make UPI Payment | Secure UPI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <div class="brand-logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <div class="brand-title">Secure UPI</div>
+          <div class="brand-subtitle">Transaction Sandbox</div>
+        </div>
+      </a>
+      <div class="collapse navbar-collapse" id="txnNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/transaction"><i class="fas fa-paper-plane me-1"></i> Make Payment</a></li>
+          <li class="nav-item"><a class="nav-link" href="/alerts"><i class="fas fa-bell me-1"></i> Alerts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/fraud-analysis"><i class="fas fa-brain me-1"></i> ML Explainability</a></li>
+          <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user-circle me-1"></i> My Profile</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-sm btn-outline-dark" onclick="openMyQrModal()">
+            <i class="fas fa-qrcode me-1"></i> My QR Code
+          </button>
+          <button class="btn btn-sm btn-outline-success" onclick="openCheckBalanceModal()">
+            <i class="fas fa-wallet me-1"></i> Check Balance
+          </button>
+          <div class="user-balance-badge">
+            <span>Balance:</span>
+            <span id="currentAvailableBalance" class="user-balance-value text-primary fw-bold">₹0.00</span>
+          </div>
+          <button onclick="logoutUser()" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container-fluid px-lg-5 py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+
+        <!-- Payment Mode Selector Boxes (White with fine black frame) -->
+        <div class="card border-0 shadow-sm mb-4 bg-white p-3">
+          <div class="small fw-bold text-dark text-uppercase mb-2 d-flex align-items-center gap-1">
+            <i class="fas fa-money-check-dollar text-dark me-1"></i> Select UPI Payment Mode:
+          </div>
+          <div class="payment-mode-grid" id="paymentModeTabs" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+            <button type="button" class="mode-select-box active" id="tab-mobile" onclick="switchPaymentMode('mobile')">
+              <i class="fas fa-mobile-screen"></i>
+              <span>Pay to Mobile</span>
+            </button>
+            <button type="button" class="mode-select-box" id="tab-scan" onclick="switchPaymentMode('scan')">
+              <i class="fas fa-camera"></i>
+              <span>Scan &amp; Pay (QR)</span>
+            </button>
+            <button type="button" class="mode-select-box" id="tab-self" onclick="switchPaymentMode('self')">
+              <i class="fas fa-building-columns"></i>
+              <span>Self Transfer</span>
+            </button>
+            <button type="button" class="mode-select-box" id="tab-wallet" onclick="switchPaymentMode('wallet')">
+              <i class="fas fa-wallet"></i>
+              <span>SecureUPI Wallet</span>
+            </button>
+            <button type="button" class="mode-select-box" id="tab-vpa" onclick="switchPaymentMode('vpa')">
+              <i class="fas fa-qrcode"></i>
+              <span>UPI ID / VPA</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Demo Scenarios Banner -->
+        <div class="card border-0 shadow-sm mb-4 bg-white p-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="small fw-bold text-muted text-uppercase">
+              <i class="fas fa-bolt text-warning me-1"></i> Preset Simulation Scenarios (One-Click Testing):
+            </span>
+          </div>
+          <div class="row g-2">
+            <div class="col-md-3 col-6">
+              <button data-scenario="legit" class="btn btn-sm btn-outline-success w-100 text-start py-2">
+                <i class="fas fa-mug-hot me-1"></i> <strong>Legitimate:</strong> ₹450 Cafe
+              </button>
+            </div>
+            <div class="col-md-3 col-6">
+              <button data-scenario="suspicious" class="btn btn-sm btn-outline-warning text-dark w-100 text-start py-2">
+                <i class="fas fa-headphones me-1"></i> <strong>Suspicious:</strong> ₹19.5k Travel
+              </button>
+            </div>
+            <div class="col-md-3 col-6">
+              <button data-scenario="midnight_drain" class="btn btn-sm btn-outline-danger w-100 text-start py-2">
+                <i class="fas fa-moon me-1"></i> <strong>Fraud:</strong> ₹85k Midnight
+              </button>
+            </div>
+            <div class="col-md-3 col-6">
+              <button data-scenario="velocity_burst" class="btn btn-sm btn-outline-danger w-100 text-start py-2">
+                <i class="fas fa-gauge-high me-1"></i> <strong>Fraud:</strong> Velocity Burst
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulated UPI Transaction Form Card -->
+        <div class="card fin-card shadow-md border-0 p-4 bg-white mb-4">
+          <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+            <div>
+              <h4 class="fw-bold text-dark mb-1" id="modeHeaderTitle">
+                <i class="fas fa-mobile-screen text-primary me-2"></i>Pay Through Mobile Number
+              </h4>
+              <p class="text-muted small mb-0" id="modeHeaderDesc">Enter beneficiary 10-digit mobile number linked to UPI.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-sm btn-outline-success" onclick="openCheckBalanceModal()">
+                <i class="fas fa-wallet me-1"></i> Check Balance
+              </button>
+              <span class="badge bg-primary px-3 py-2">Real-Time ML Active</span>
+            </div>
+          </div>
+
+          <form id="transactionForm">
+            <!-- Dynamic Mode Inputs Container -->
+            <div id="dynamicModeContainer" class="p-3 bg-light rounded-3 mb-4 border">
+              <!-- Rendered via JavaScript according to selected mode -->
+            </div>
+
+            <!-- Core Payment Fields -->
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label class="form-label">Sender Account / User ID</label>
+                <input type="text" id="senderUserId" class="form-control bg-light" readonly>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Transaction Type</label>
+                <select id="txnType" class="form-select">
+                  <option value="P2P">P2P (Peer-to-Peer Transfer)</option>
+                  <option value="P2M">P2M (Merchant Payment)</option>
+                  <option value="ONLINE_SHOPPING">Online Shopping / E-commerce</option>
+                  <option value="BILL_PAYMENT">Bill &amp; Utility Payment</option>
+                  <option value="INVESTMENT">Investment / Crypto Gateway</option>
+                  <option value="RECHARGE">Mobile &amp; Fastag Recharge</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Receiver UPI ID / VPA <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="fas fa-at text-muted"></i></span>
+                  <input type="text" id="receiverId" class="form-control" placeholder="e.g. 9876543210@upi" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Beneficiary Name</label>
+                <input type="text" id="receiverName" class="form-control" placeholder="e.g. Priya Patel or Merchant">
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Transaction Amount (INR) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light fw-bold text-dark">₹</span>
+                  <input type="number" id="txnAmount" class="form-control fw-bold fs-5 text-dark" placeholder="500.00" min="1" step="0.5" required>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Transaction Note / Purpose</label>
+                <input type="text" id="txnNote" class="form-control" placeholder="e.g. Dinner with friends">
+              </div>
+            </div>
+
+            <!-- Device, Geolocation & Behavioral Parameters -->
+            <div class="p-3 bg-light rounded-3 mb-4">
+              <h6 class="fw-bold text-secondary mb-3"><i class="fas fa-microchip text-primary me-2"></i>Device, Environment &amp; Behavioral Baseline Inputs</h6>
+              
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Transaction Geolocation</label>
+                  <input type="text" id="txnLocation" class="form-control" value="Hyderabad">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Device Signature / ID</label>
+                  <input type="text" id="deviceId" class="form-control font-monospace" value="DEV_ANDROID_14_HYD">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Hour of Day (0 - 23)</label>
+                  <input type="number" id="timeOfDay" class="form-control" value="12" min="0" max="23">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">User Avg Txn Amount (₹)</label>
+                  <input type="number" id="avgAmount" class="form-control" value="1200">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Txn Frequency (Monthly)</label>
+                  <input type="number" id="txnFrequency" class="form-control" value="15">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Mins Since Last Payment</label>
+                  <input type="number" id="timeSinceLast" class="form-control" value="120">
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Failed PIN Attempts</label>
+                  <input type="number" id="failedTxnCount" class="form-control" value="0" min="0" max="10">
+                </div>
+
+                <div class="col-md-4">
+                  <label class="form-label">Velocity (Txns/Hour Burst)</label>
+                  <input type="number" id="txnVelocity" class="form-control" value="1.2" step="0.1">
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Action Buttons -->
+            <div class="d-flex flex-wrap gap-3">
+              <button type="button" id="checkRiskBtn" class="btn btn-outline-primary btn-lg flex-grow-1 py-2">
+                <i class="fas fa-brain me-2"></i>Run Real-Time ML Fraud Scan
+              </button>
+              <button type="submit" class="btn btn-fin-primary btn-lg flex-grow-1 py-2">
+                <i class="fas fa-paper-plane me-2"></i>Submit Simulated UPI Transaction
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Pre-Payment ML Risk Analysis Modal -->
+  <div class="modal fade" id="riskAnalysisModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-shield-virus text-warning me-2"></i>Pre-Payment ML Security Scan
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row align-items-center mb-4">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded text-center">
+                <div class="text-muted small text-uppercase fw-bold">Calculated Risk Score</div>
+                <div id="modalRiskScore" class="display-5 fw-bold text-dark my-1">0%</div>
+                <div id="modalRiskBadge" class="mt-1"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-2">
+                <div class="d-flex justify-content-between small fw-semibold mb-1">
+                  <span>Fraud Probability:</span>
+                  <span id="modalFraudProb" class="text-primary fw-bold">0.0%</span>
+                </div>
+                <div class="risk-meter-container">
+                  <div id="modalRiskMeterBar" class="risk-meter-bar" style="width: 0%;"></div>
+                </div>
+              </div>
+              <div class="small text-muted mt-2">
+                <strong>ML Model:</strong> <span id="modalModelUsed">Random Forest</span>
+              </div>
+              <div class="small text-muted mt-1">
+                <strong>Recommendation:</strong> <span id="modalRecommendation" class="text-dark fw-semibold"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Explanation Breakdown -->
+          <h6 class="fw-bold text-dark mb-2"><i class="fas fa-list-check text-primary me-2"></i>Detection Reasons &amp; Findings:</h6>
+          <ul id="modalReasonsList" class="list-unstyled mb-4 p-3 bg-light rounded small"></ul>
+
+          <h6 class="fw-bold text-dark mb-2"><i class="fas fa-chart-column text-primary me-2"></i>Top Influencing Feature Contributions:</h6>
+          <div id="modalFeatureContributions" class="p-3 border rounded bg-white mb-3"></div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel Transaction</button>
+          <button type="button" id="modalProceedPaymentBtn" class="btn btn-fin-primary">
+            <i class="fas fa-check-circle me-1"></i>Proceed with Payment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Check Balance Interactive Modal -->
+  <div class="modal fade" id="checkBalanceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-shield-halved text-success me-2"></i>Check Account Balance
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          
+          <div id="pinEntryStep">
+            <div class="brand-logo-icon mx-auto mb-3" style="width: 50px; height: 50px;">
+              <i class="fas fa-key"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-1">Enter 4 or 6-digit UPI PIN</h5>
+            <p class="text-muted small mb-3">Simulated secure PIN verification (Default Demo PIN: <strong class="text-primary">1234</strong>)</p>
+
+            <div class="mb-4 d-flex justify-content-center">
+              <input type="password" id="upiPinInput" class="form-control text-center fs-3 font-monospace" style="max-width: 220px; letter-spacing: 8px;" maxlength="6" placeholder="••••" autofocus>
+            </div>
+
+            <button type="button" onclick="verifyAndShowBalance()" class="btn btn-fin-primary w-100 py-2 fw-semibold">
+              <i class="fas fa-lock-open me-2"></i>Verify &amp; View Balance
+            </button>
+          </div>
+
+          <div id="balanceResultStep" style="display: none;">
+            <div class="p-3 bg-success-subtle border border-success-subtle rounded-3 text-center mb-3">
+              <div class="text-success small fw-bold text-uppercase mb-1"><i class="fas fa-check-circle me-1"></i>Verified Available Balance</div>
+              <h2 id="modalRevealedBalance" class="display-5 fw-bold text-success mb-1">₹0.00</h2>
+              <div class="small text-muted" id="modalBankDetails">State Bank of India (**** 4829)</div>
+            </div>
+
+            <div class="small text-muted mb-3" id="modalTimestamp">Checked just now</div>
+            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Done</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transaction Result Modal -->
+  <div class="modal fade" id="txnResultModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-white border-bottom">
+          <h5 class="modal-title fw-bold text-dark">
+            <i class="fas fa-receipt text-primary me-2"></i>UPI Transaction Result
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3" id="resStatusBadge"></div>
+          <h3 id="resAmount" class="fw-bold text-dark mb-1">₹0.00</h3>
+          <p id="resReceiver" class="text-muted small mb-3"></p>
+
+          <div class="alert alert-light border text-start small mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Transaction ID:</span>
+              <span id="resTxnId" class="font-monospace fw-semibold text-primary"></span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Risk Assessment:</span>
+              <span id="resRiskBadge"></span>
+            </div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Fraud Risk Score:</span>
+              <span id="resRiskScore" class="fw-bold"></span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted">Remaining Wallet Balance:</span>
+              <span id="resRemainingBalance" class="fw-bold text-success"></span>
+            </div>
+          </div>
+
+          <p id="resMessage" class="small fw-semibold text-secondary mb-0"></p>
+        </div>
+        <div class="modal-footer bg-light">
+          <a href="/dashboard" class="btn btn-outline-secondary">Go to Dashboard</a>
+          <button type="button" class="btn btn-fin-primary" data-bs-dismiss="modal">Make Another Payment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My Personal QR Code Modal (Receive Money) -->
+  <div class="modal fade" id="myQrCodeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-qrcode text-success me-2"></i>My Personal UPI QR Code
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="p-3 bg-white rounded-3 border shadow-sm d-inline-block mb-3">
+            <img id="myQrCodeImg" src="" alt="My UPI QR Code" class="img-fluid rounded" style="width: 220px; height: 220px; object-fit: contain;">
+          </div>
+          <h5 id="myQrUserName" class="fw-bold text-dark mb-1">User Name</h5>
+          <div class="badge bg-primary-subtle text-primary font-monospace fs-6 px-3 py-1 mb-3" id="myQrVpa">user@secureupi</div>
+          <p class="text-muted small mb-3">Scan this QR code from any UPI app (GPay, PhonePe, Paytm, BHIM) to receive money instantly into your Secure UPI account.</p>
+
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="copyMyUpiId()">
+              <i class="fas fa-copy me-1"></i> Copy UPI ID
+            </button>
+            <a id="myQrDownloadBtn" href="#" target="_blank" class="btn btn-fin-primary btn-sm">
+              <i class="fas fa-download me-1"></i> Save QR Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-custom text-center">
+    <div class="container small text-muted">
+      Secure UPI Academic FinTech System &copy; 2026 | Real-Time Machine Learning Transaction Security
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/transaction.js"></script>
+</body>
+</html>

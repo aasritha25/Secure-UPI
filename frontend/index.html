@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure UPI: Machine Learning-Driven Fraud Detection System</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <div class="brand-logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <div class="brand-title">Secure UPI</div>
+          <div class="brand-subtitle">ML Fraud Detection System</div>
+        </div>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item"><a class="nav-link active" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transaction"><i class="fas fa-paper-plane me-1"></i> Pay / Simulate</a></li>
+          <li class="nav-item"><a class="nav-link" href="/alerts"><i class="fas fa-bell me-1"></i> Alerts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/fraud-analysis"><i class="fas fa-brain me-1"></i> ML Analysis</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admin"><i class="fas fa-user-shield me-1"></i> Admin</a></li>
+        </ul>
+        <div class="d-flex gap-2">
+          <a href="/login" class="btn btn-fin-secondary"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
+          <a href="/register" class="btn btn-fin-primary"><i class="fas fa-user-plus me-1"></i> Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container-fluid px-lg-5">
+      <div class="row align-items-center gy-5">
+        <div class="col-lg-7">
+          <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill mb-3 border border-primary-subtle">
+            <i class="fas fa-shield-virus me-2"></i>Real-Time FinTech Security Platform
+          </span>
+          <h1 class="hero-title mb-3">
+            Secure UPI: <span class="hero-gradient-text">Machine Learning-Driven</span> Fraud Detection System
+          </h1>
+          <p class="hero-subtitle mb-4">
+            Detect suspicious digital payment transactions using intelligent transaction analysis. Protect customers and merchants in real time before money moves.
+          </p>
+          <div class="d-flex flex-wrap gap-3 mb-5">
+            <a href="/login" class="btn btn-fin-primary btn-lg px-4">
+              <i class="fas fa-sign-in-alt me-2"></i>Login
+            </a>
+            <a href="/register" class="btn btn-fin-secondary btn-lg px-4">
+              <i class="fas fa-user-plus me-2"></i>Register
+            </a>
+            <a href="/transaction" class="btn btn-outline-primary btn-lg px-4">
+              <i class="fas fa-bolt me-2"></i>Try Demo
+            </a>
+          </div>
+
+          <!-- Academic Tech Badge Pills -->
+          <div class="d-flex flex-wrap gap-2 text-muted small">
+            <span class="badge bg-light text-dark border"><i class="fab fa-python me-1 text-primary"></i> Python 3.12+ Flask</span>
+            <span class="badge bg-light text-dark border"><i class="fas fa-tree me-1 text-success"></i> Random Forest & XGBoost</span>
+            <span class="badge bg-light text-dark border"><i class="fas fa-key me-1 text-warning"></i> JWT & Role-Based Auth</span>
+            <span class="badge bg-light text-dark border"><i class="fas fa-database me-1 text-info"></i> SQLite / MySQL</span>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <!-- Real-Time ML Scan Preview Card -->
+          <div class="card fin-card shadow-lg border-0 p-4 bg-white position-relative">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                <i class="fas fa-circle-dot me-1 fa-beat"></i> Live Fraud Scan Engine
+              </span>
+              <span class="text-muted small font-monospace">API: /api/predict</span>
+            </div>
+
+            <div class="p-3 bg-light rounded-3 mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="small fw-semibold text-muted">Current Simulated Check</span>
+                <span class="badge bg-danger">HIGH RISK (88%)</span>
+              </div>
+              <div class="risk-meter-container mb-2">
+                <div class="risk-meter-bar high" style="width: 88%;"></div>
+              </div>
+              <div class="small text-danger fw-semibold">
+                <i class="fas fa-triangle-exclamation me-1"></i> Sudden 45x spike &amp; new emulator device
+              </div>
+            </div>
+
+            <div class="row g-2 text-center small mb-3">
+              <div class="col-4">
+                <div class="p-2 border rounded bg-white">
+                  <div class="text-muted">Algorithm</div>
+                  <div class="fw-bold text-primary">Random Forest</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 border rounded bg-white">
+                  <div class="text-muted">ROC-AUC</div>
+                  <div class="fw-bold text-success">0.999+</div>
+                </div>
+              </div>
+              <div class="col-4">
+                <div class="p-2 border rounded bg-white">
+                  <div class="text-muted">Latency</div>
+                  <div class="fw-bold text-dark">&lt; 25 ms</div>
+                </div>
+              </div>
+            </div>
+
+            <a href="/transaction" class="btn btn-primary w-100 fw-semibold">
+              <i class="fas fa-flask me-2"></i>Launch UPI Sandbox Simulator
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Architecture Modules -->
+  <section class="py-5 bg-white border-bottom">
+    <div class="container-fluid px-lg-5">
+      <div class="text-center mb-5">
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill fw-bold">SYSTEM MODULES</span>
+        <h2 class="fw-bold mt-2">End-to-End Intelligent Fraud Prevention</h2>
+        <p class="text-muted mx-auto" style="max-width: 600px;">
+          Simulating real-time financial security with modular, transparent, and enterprise-grade pipelines.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="feature-box">
+            <div class="feature-icon-wrapper">
+              <i class="fas fa-radar"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Module 1: Transaction Monitoring</h5>
+            <p class="text-muted small mb-0">
+              Captures amount, geolocation, device signatures, frequency, velocity, and user account age in real time.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="feature-box">
+            <div class="feature-icon-wrapper">
+              <i class="fas fa-brain"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Module 2: ML Fraud Detection</h5>
+            <p class="text-muted small mb-0">
+              Compares Logistic Regression, Random Forest, and XGBoost to generate real-time fraud probability scores.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="feature-box">
+            <div class="feature-icon-wrapper">
+              <i class="fas fa-shield-halved"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Module 3: Risk &amp; Alert Engine</h5>
+            <p class="text-muted small mb-0">
+              Classifies Low (0-30), Medium (31-70), High (71-100) risk, intercepting malicious transfers and alerting admins.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="feature-box">
+            <div class="feature-icon-wrapper">
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Module 4: Admin &amp; User Dashboards</h5>
+            <p class="text-muted small mb-0">
+              Interactive Chart.js visualizations, multi-filter transaction search, explainability charts, and audit logs.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Complete Demo Transaction Flow Walkthrough -->
+  <section class="py-5 bg-light">
+    <div class="container-fluid px-lg-5">
+      <div class="text-center mb-5">
+        <span class="badge bg-secondary-subtle text-secondary px-3 py-2 rounded-pill fw-bold">WORKFLOW SIMULATION</span>
+        <h2 class="fw-bold mt-2">How Secure UPI Intercepts Fraud</h2>
+      </div>
+
+      <div class="row g-3 text-center">
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-primary mb-2"><i class="fas fa-user-check"></i></div>
+            <div class="fw-bold small">1. Customer Initiates</div>
+            <div class="text-muted small">Enters receiver UPI &amp; amount</div>
+          </div>
+        </div>
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-info mb-2"><i class="fas fa-network-wired"></i></div>
+            <div class="fw-bold small">2. Dynamic Extraction</div>
+            <div class="text-muted small">Device, location, &amp; velocity</div>
+          </div>
+        </div>
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-warning mb-2"><i class="fas fa-microchip"></i></div>
+            <div class="fw-bold small">3. ML Inference</div>
+            <div class="text-muted small">Probabilities &amp; risk score</div>
+          </div>
+        </div>
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-danger mb-2"><i class="fas fa-sliders"></i></div>
+            <div class="fw-bold small">4. Risk Thresholds</div>
+            <div class="text-muted small">0-30 / 31-70 / 71-100</div>
+          </div>
+        </div>
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-success mb-2"><i class="fas fa-database"></i></div>
+            <div class="fw-bold small">5. DB &amp; Alert Log</div>
+            <div class="text-muted small">Instant intercept &amp; alerts</div>
+          </div>
+        </div>
+        <div class="col-md-2 col-6">
+          <div class="p-3 bg-white rounded shadow-sm border h-100">
+            <div class="fs-4 text-primary mb-2"><i class="fas fa-desktop"></i></div>
+            <div class="fw-bold small">6. Live Dashboards</div>
+            <div class="text-muted small">Real-time statistics update</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer-custom">
+    <div class="container-fluid px-lg-5 text-center">
+      <p class="mb-1 fw-bold text-dark">Secure UPI: Machine Learning-Driven Fraud Detection System</p>
+      <p class="text-muted small mb-0">Full-Stack Academic FinTech Capstone Project | Built with Flask, Bootstrap 5, Scikit-learn, XGBoost &amp; Chart.js</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/config.js"></script>
+</body>
+</html>

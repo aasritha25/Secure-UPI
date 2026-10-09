@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank Admin Monitoring Dashboard | Secure UPI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Admin Topbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center" href="/admin">
+        <div class="brand-logo-icon bg-danger text-white"><i class="fas fa-shield-virus"></i></div>
+        <div>
+          <div class="brand-title text-white">Secure UPI</div>
+          <div class="brand-subtitle text-warning">Bank Fraud Admin Portal</div>
+        </div>
+      </a>
+      <div class="collapse navbar-collapse" id="adminNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item"><a class="nav-link active text-white" href="/admin"><i class="fas fa-chart-line me-1"></i> Admin Overview</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="/fraud-analysis"><i class="fas fa-brain me-1"></i> Model Analytics</a></li>
+          <li class="nav-item"><a class="nav-link text-white-50" href="/alerts"><i class="fas fa-bell me-1"></i> System Alerts</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <span class="badge bg-danger px-3 py-2"><i class="fas fa-user-shield me-1"></i> Enterprise Admin</span>
+          <button onclick="logoutUser()" class="btn btn-sm btn-outline-light">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Container -->
+  <div class="container-fluid px-lg-5 py-4">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div>
+        <h3 class="fw-bold text-dark mb-1">Central Fraud Monitoring &amp; Transaction Audit</h3>
+        <p class="text-muted small mb-0">System-wide monitoring of UPI traffic, intercepted anomalies, user accounts, and ML models.</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button onclick="location.reload()" class="btn btn-sm btn-outline-secondary">
+          <i class="fas fa-rotate me-1"></i> Refresh Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin KPI Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Registered Users</div>
+            <div id="adminTotalUsers" class="metric-value">0</div>
+          </div>
+          <div class="metric-icon-box primary"><i class="fas fa-users"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Total Transactions</div>
+            <div id="adminTotalTxns" class="metric-value">0</div>
+          </div>
+          <div class="metric-icon-box primary"><i class="fas fa-money-bill-transfer"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Legitimate Traffic</div>
+            <div id="adminLegitTxns" class="metric-value text-success">0</div>
+          </div>
+          <div class="metric-icon-box success"><i class="fas fa-check-circle"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Suspicious Intercepts</div>
+            <div id="adminSuspiciousTxns" class="metric-value text-warning">0</div>
+          </div>
+          <div class="metric-icon-box warning"><i class="fas fa-exclamation-circle"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Fraud Intercepted</div>
+            <div id="adminFraudTxns" class="metric-value text-danger">0</div>
+          </div>
+          <div class="metric-icon-box danger"><i class="fas fa-ban"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">System Fraud Rate</div>
+            <div id="adminFraudPct" class="metric-value text-danger">0.0%</div>
+          </div>
+          <div class="metric-icon-box danger"><i class="fas fa-percent"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Total Volume Processed</div>
+            <div id="adminTotalVolume" class="metric-value text-success fs-5">₹0.00</div>
+          </div>
+          <div class="metric-icon-box success"><i class="fas fa-wallet"></i></div>
+        </div>
+      </div>
+
+      <div class="col-md-3 col-6">
+        <div class="metric-card">
+          <div>
+            <div class="metric-title">Fraud Volume Blocked</div>
+            <div id="adminFraudIntercepted" class="metric-value text-danger fs-5">₹0.00</div>
+          </div>
+          <div class="metric-icon-box danger"><i class="fas fa-shield-virus"></i></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Charts Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-8">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header">
+            <h5><i class="fas fa-chart-line text-primary me-2"></i>Live Transaction Volume &amp; Fraud Trend</h5>
+          </div>
+          <div class="fin-card-body" style="height: 300px; position: relative;">
+            <canvas id="adminTimelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header">
+            <h5><i class="fas fa-pie-chart text-warning me-2"></i>System Risk Distribution</h5>
+          </div>
+          <div class="fin-card-body" style="height: 300px; position: relative;">
+            <canvas id="adminRiskPieChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Dimensional Transaction Filter & Audit Table -->
+    <div class="card fin-card shadow-sm mb-4">
+      <div class="fin-card-header">
+        <h5><i class="fas fa-table-list text-primary me-2"></i>Enterprise Transaction Monitoring &amp; Filtering</h5>
+      </div>
+      <div class="p-3 bg-light border-bottom">
+        <div class="row g-2">
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">Status</label>
+            <select id="filterStatus" class="form-select form-select-sm">
+              <option value="ALL">All Statuses</option>
+              <option value="SUCCESS">Approved (Success)</option>
+              <option value="FLAGGED_FOR_VERIFICATION">Suspicious Flagged</option>
+              <option value="BLOCKED">Fraud Blocked</option>
+              <option value="FAILED">Failed</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">Risk Level</label>
+            <select id="filterRiskLevel" class="form-select form-select-sm">
+              <option value="ALL">All Risk Levels</option>
+              <option value="LOW_RISK">Low Risk (0-30)</option>
+              <option value="MEDIUM_RISK">Medium Risk (31-70)</option>
+              <option value="HIGH_RISK">High Risk (71-100)</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">User Search</label>
+            <input type="text" id="filterUser" class="form-control form-control-sm" placeholder="Name or Email">
+          </div>
+
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">Location City</label>
+            <input type="text" id="filterLocation" class="form-control form-control-sm" placeholder="e.g. Mumbai">
+          </div>
+
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">Min Amount (₹)</label>
+            <input type="number" id="filterMinAmount" class="form-control form-control-sm" placeholder="Min ₹">
+          </div>
+
+          <div class="col-md-2 col-6">
+            <label class="form-label small mb-1">Max Amount (₹)</label>
+            <input type="number" id="filterMaxAmount" class="form-control form-control-sm" placeholder="Max ₹">
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <button id="resetFiltersBtn" class="btn btn-sm btn-outline-secondary">Reset Filters</button>
+          <button id="applyFiltersBtn" class="btn btn-sm btn-primary"><i class="fas fa-filter me-1"></i>Apply Filters</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table fin-table mb-0">
+          <thead>
+            <tr>
+              <th>Txn ID</th>
+              <th>Customer</th>
+              <th>Beneficiary</th>
+              <th>Amount</th>
+              <th>Location</th>
+              <th>Device</th>
+              <th>Risk Score</th>
+              <th>Risk Level</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="adminTransactionsTable">
+            <tr><td colspan="10" class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading audit records...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Machine Learning Benchmark & User Management Row -->
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header">
+            <h5><i class="fas fa-brain text-primary me-2"></i>ML Model Benchmark &amp; Performance Statistics</h5>
+          </div>
+          <div class="fin-card-body">
+            <div class="table-responsive mb-3">
+              <table class="table table-sm table-bordered mb-0 small">
+                <thead class="table-light">
+                  <tr>
+                    <th>Model</th>
+                    <th>Accuracy</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>ROC-AUC</th>
+                    <th>Confusion Matrix</th>
+                  </tr>
+                </thead>
+                <tbody id="modelComparisonTable"></tbody>
+              </table>
+            </div>
+
+            <h6 class="fw-bold small text-muted text-uppercase mb-2">Top ML Feature Importances Ranking:</h6>
+            <div id="topFeaturesBarContainer"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card fin-card h-100">
+          <div class="fin-card-header">
+            <h5><i class="fas fa-users text-dark me-2"></i>Registered User Accounts</h5>
+          </div>
+          <div class="table-responsive">
+            <table class="table fin-table mb-0 small">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Balance</th>
+                  <th>Created</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Transaction Inspection Modal -->
+  <div class="modal fade" id="inspectTxnModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold"><i class="fas fa-search-plus text-primary me-2"></i>Transaction Anomaly Deep Inspection</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Transaction ID</div>
+                <div id="inspectTxnId" class="font-monospace fw-bold text-primary"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Customer Account</div>
+                <div id="inspectUser" class="fw-bold"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Beneficiary Details</div>
+                <div id="inspectReceiver" class="fw-bold"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Amount &amp; Status</div>
+                <div class="d-flex align-items-center gap-2">
+                  <span id="inspectAmount" class="fw-bold fs-5"></span>
+                  <span id="inspectStatus"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Risk Assessment</div>
+                <div id="inspectRisk"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Timestamp</div>
+                <div id="inspectTimestamp" class="fw-bold"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Location</div>
+                <div id="inspectLocation" class="fw-bold"></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-2 border rounded bg-light">
+                <div class="small text-muted">Device ID</div>
+                <div id="inspectDevice" class="font-monospace fw-bold"></div>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold mt-3 mb-2">ML Risk Explanation Reasons:</h6>
+          <ul id="inspectReasonsList" class="p-3 bg-light rounded small"></ul>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-custom text-center">
+    <div class="container small text-muted">
+      Secure UPI Bank Admin Console &copy; 2026 | Enterprise ML Anomaly Detection &amp; Audit
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

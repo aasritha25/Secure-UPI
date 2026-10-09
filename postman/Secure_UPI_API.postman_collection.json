@@ -1,0 +1,275 @@
+{
+  "info": {
+    "name": "Secure UPI: Machine Learning-Driven Fraud Detection API",
+    "description": "Complete REST API collection for Secure UPI full-stack platform, covering Auth, Payments, Real-Time ML Predictions, Alerts, and Enterprise Admin Monitoring.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:5000/api", "type": "string" },
+    { "key": "authToken", "value": "", "type": "string" },
+    { "key": "adminToken", "value": "", "type": "string" },
+    { "key": "sampleTxnId", "value": "TXN-9812401", "type": "string" },
+    { "key": "sampleAlertId", "value": "1", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Customer Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('authToken', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"demo@secureupi.com\",\n  \"password\": \"demo123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.access_token) {",
+                  "    pm.collectionVariables.set('adminToken', jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@secureupi.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] }
+          }
+        },
+        {
+          "name": "Register New Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Vikram Malhotra\",\n  \"email\": \"vikram@secureupi.com\",\n  \"phone\": \"9876543219\",\n  \"password\": \"vikram123\",\n  \"initial_balance\": 75000\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] }
+          }
+        },
+        {
+          "name": "Get User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/auth/profile", "host": ["{{baseUrl}}"], "path": ["auth", "profile"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Real-Time ML Fraud Prediction",
+      "item": [
+        {
+          "name": "Pre-Payment Risk Scan (Legitimate Scenario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiver_id\": \"cafe.coffee@upi\",\n  \"receiver_name\": \"Local Cafe\",\n  \"amount\": 350.0,\n  \"average_amount\": 1200.0,\n  \"transaction_type\": \"P2M\",\n  \"location\": \"Hyderabad\",\n  \"device_id\": \"DEV_ANDROID_14_HYD\",\n  \"time_of_day\": 11,\n  \"time_since_last_transaction\": 120,\n  \"failed_transactions\": 0,\n  \"transaction_velocity\": 1.0\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/predict", "host": ["{{baseUrl}}"], "path": ["predict"] }
+          }
+        },
+        {
+          "name": "Pre-Payment Risk Scan (High-Risk Fraud Scenario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiver_id\": \"unverified.drain88@ybl\",\n  \"receiver_name\": \"Unknown Beneficiary\",\n  \"amount\": 85000.0,\n  \"average_amount\": 1200.0,\n  \"transaction_type\": \"INVESTMENT\",\n  \"location\": \"Kolkata\",\n  \"device_id\": \"DEV_UNKNOWN_EMULATOR\",\n  \"time_of_day\": 3,\n  \"time_since_last_transaction\": 2,\n  \"failed_transactions\": 4,\n  \"transaction_velocity\": 8.5\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/predict", "host": ["{{baseUrl}}"], "path": ["predict"] }
+          }
+        },
+        {
+          "name": "Get ML Model Benchmark Metrics",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/model/metrics", "host": ["{{baseUrl}}"], "path": ["model", "metrics"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Transactions",
+      "item": [
+        {
+          "name": "Execute UPI Payment (Legitimate)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiver_id\": \"bookmart@upi\",\n  \"receiver_name\": \"Book Mart Store\",\n  \"amount\": 1250.0,\n  \"transaction_type\": \"P2M\",\n  \"location\": \"Hyderabad\",\n  \"device_id\": \"DEV_ANDROID_14_HYD\",\n  \"note\": \"Textbook purchase\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/transactions", "host": ["{{baseUrl}}"], "path": ["transactions"] }
+          }
+        },
+        {
+          "name": "Execute UPI Payment (High-Risk - Blocked by ML)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receiver_id\": \"suspicious.node@axl\",\n  \"receiver_name\": \"Unknown Crypto Transfer\",\n  \"amount\": 90000.0,\n  \"average_amount\": 1000.0,\n  \"transaction_type\": \"INVESTMENT\",\n  \"location\": \"Delhi\",\n  \"device_id\": \"DEV_UNKNOWN_EMULATOR\",\n  \"time_of_day\": 3,\n  \"failed_transactions\": 3,\n  \"transaction_velocity\": 7.5\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/transactions", "host": ["{{baseUrl}}"], "path": ["transactions"] }
+          }
+        },
+        {
+          "name": "Get User Transaction History",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/transactions", "host": ["{{baseUrl}}"], "path": ["transactions"] }
+          }
+        },
+        {
+          "name": "Get Transaction Details & Explainability",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/transactions/{{sampleTxnId}}", "host": ["{{baseUrl}}"], "path": ["transactions", "{{sampleTxnId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Alerts & Dashboard",
+      "item": [
+        {
+          "name": "Get User Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["dashboard", "stats"] }
+          }
+        },
+        {
+          "name": "Get Dashboard Chart Data",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/dashboard/charts", "host": ["{{baseUrl}}"], "path": ["dashboard", "charts"] }
+          }
+        },
+        {
+          "name": "Get Active Fraud Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "url": { "raw": "{{baseUrl}}/alerts", "host": ["{{baseUrl}}"], "path": ["alerts"] }
+          }
+        },
+        {
+          "name": "Resolve Alert",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/alerts/{{sampleAlertId}}/resolve", "host": ["{{baseUrl}}"], "path": ["alerts", "{{sampleAlertId}}", "resolve"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Bank Admin Monitoring",
+      "item": [
+        {
+          "name": "Get Enterprise Admin Stats & KPIs",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/stats", "host": ["{{baseUrl}}"], "path": ["admin", "stats"] }
+          }
+        },
+        {
+          "name": "Get Filtered Transactions (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/admin/transactions?status=ALL&risk_level=ALL",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "transactions"],
+              "query": [
+                { "key": "status", "value": "ALL" },
+                { "key": "risk_level", "value": "ALL" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get All Registered Users",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/users", "host": ["{{baseUrl}}"], "path": ["admin", "users"] }
+          }
+        },
+        {
+          "name": "Get All System Alerts",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": { "raw": "{{baseUrl}}/admin/alerts", "host": ["{{baseUrl}}"], "path": ["admin", "alerts"] }
+          }
+        }
+      ]
+    }
+  ]
+}

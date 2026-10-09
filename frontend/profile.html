@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile &amp; Balance Management | Secure UPI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid px-lg-5">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <div class="brand-logo-icon"><i class="fas fa-shield-halved"></i></div>
+        <div>
+          <div class="brand-title">Secure UPI</div>
+          <div class="brand-subtitle">User Profile &amp; Wallet</div>
+        </div>
+      </a>
+      <div class="collapse navbar-collapse" id="profNav">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-chart-line me-1"></i> Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/transaction"><i class="fas fa-paper-plane me-1"></i> Make Payment</a></li>
+          <li class="nav-item"><a class="nav-link" href="/alerts"><i class="fas fa-bell me-1"></i> Alerts</a></li>
+          <li class="nav-item"><a class="nav-link" href="/fraud-analysis"><i class="fas fa-brain me-1"></i> ML Explainability</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/profile"><i class="fas fa-user-circle me-1"></i> My Profile</a></li>
+        </ul>
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-sm btn-outline-dark" onclick="openMyQrModal()">
+            <i class="fas fa-qrcode me-1"></i> My QR Code
+          </button>
+          <button class="btn btn-sm btn-outline-success" onclick="openCheckBalanceModal()">
+            <i class="fas fa-wallet me-1"></i> Check Balance
+          </button>
+          <div class="user-balance-badge">
+            <span>Balance:</span>
+            <span class="user-balance-value text-primary fw-bold">₹0.00</span>
+          </div>
+          <button onclick="logoutUser()" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-sign-out-alt me-1"></i> Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <div class="container-fluid px-lg-5 py-4">
+    
+    <div class="row align-items-center mb-4 gy-2">
+      <div class="col-md-7">
+        <h3 class="fw-bold text-dark mb-1"><i class="fas fa-user-circle text-primary me-2"></i>My Profile &amp; Financial Settings</h3>
+        <p class="text-muted small mb-0">Manage personal credentials, customize your virtual simulated account balance, and view linked bank accounts.</p>
+      </div>
+      <div class="col-md-5 text-md-end">
+        <button class="btn btn-success me-2" onclick="openCheckBalanceModal()">
+          <i class="fas fa-shield-alt me-1"></i> Check Live Balance
+        </button>
+        <a href="/transaction" class="btn btn-fin-primary">
+          <i class="fas fa-paper-plane me-1"></i> Send Money
+        </a>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      
+      <!-- Profile Card -->
+      <div class="col-lg-5">
+        <div class="card fin-card h-100 shadow-sm">
+          <div class="fin-card-header bg-white">
+            <h5><i class="fas fa-id-card text-primary me-2"></i>Personal Details</h5>
+          </div>
+          <div class="fin-card-body">
+            <div class="text-center mb-4">
+              <div class="brand-logo-icon mx-auto mb-2" style="width: 64px; height: 64px; font-size: 1.8rem; border-radius: 50%;">
+                <i class="fas fa-user"></i>
+              </div>
+              <h5 id="profNameDisplay" class="fw-bold text-dark mb-0">Loading User...</h5>
+              <div class="text-muted small" id="profEmailDisplay">loading@secureupi.com</div>
+              <span class="badge bg-primary-subtle text-primary mt-2 px-3 py-1 font-monospace" id="profUpiVpaDisplay">
+                vpa@secureupi
+              </span>
+              <div class="mt-2">
+                <button type="button" class="btn btn-sm btn-outline-dark" onclick="openMyQrModal()">
+                  <i class="fas fa-qrcode me-1"></i> View My QR Code
+                </button>
+              </div>
+            </div>
+
+            <form id="profileUpdateForm">
+              <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="profNameInput" class="form-control" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Phone Number (Linked to UPI)</label>
+                <input type="tel" id="profPhoneInput" class="form-control" required>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Email Address (Read-only)</label>
+                <input type="email" id="profEmailInput" class="form-control bg-light" readonly>
+              </div>
+
+              <button type="submit" class="btn btn-fin-primary w-100">
+                <i class="fas fa-save me-1"></i> Update Personal Info
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Custom Balance Manager -->
+      <div class="col-lg-7">
+        <div class="card fin-card h-100 shadow-sm border-primary">
+          <div class="fin-card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="text-white mb-0"><i class="fas fa-wallet me-2"></i>Custom Balance Manager</h5>
+            <span class="badge bg-white text-primary fw-bold">Customizable Balance</span>
+          </div>
+          <div class="fin-card-body">
+            <div class="p-3 bg-light rounded-3 mb-4 text-center border">
+              <span class="text-muted small text-uppercase fw-bold">Current Available Balance</span>
+              <h2 class="display-6 fw-bold text-success my-1 user-balance-value">₹0.00</h2>
+              <span class="text-muted small"><i class="fas fa-building-columns text-primary me-1"></i>State Bank of India (Simulated Primary)</span>
+            </div>
+
+            <h6 class="fw-bold text-dark mb-2"><i class="fas fa-sliders text-primary me-2"></i>Change / Set Custom Account Balance:</h6>
+            <p class="text-muted small mb-3">Adjust your balance dynamically to test different transaction thresholds and fraud limit triggers:</p>
+
+            <form id="balanceUpdateForm" class="mb-4">
+              <div class="input-group input-group-lg mb-3">
+                <span class="input-group-text bg-white fw-bold">₹</span>
+                <input type="number" id="customBalanceInput" class="form-control fw-bold" placeholder="Enter custom amount" min="0" max="10000000" step="1000" required>
+                <button type="submit" class="btn btn-primary px-4 fw-bold">
+                  <i class="fas fa-check-circle me-1"></i> Save Balance
+                </button>
+              </div>
+            </form>
+
+            <!-- Quick Add Preset Buttons -->
+            <div class="small fw-bold text-muted text-uppercase mb-2">Quick Preset Balance Modifiers:</div>
+            <div class="row g-2 mb-4">
+              <div class="col-sm-3 col-6">
+                <button onclick="setPresetBalance(25000)" class="btn btn-sm btn-outline-secondary w-100 py-2">
+                  ₹25,000 (Low)
+                </button>
+              </div>
+              <div class="col-sm-3 col-6">
+                <button onclick="setPresetBalance(100000)" class="btn btn-sm btn-outline-primary w-100 py-2">
+                  ₹1,00,000 (Default)
+                </button>
+              </div>
+              <div class="col-sm-3 col-6">
+                <button onclick="setPresetBalance(250000)" class="btn btn-sm btn-outline-success w-100 py-2">
+                  ₹2,50,000 (High)
+                </button>
+              </div>
+              <div class="col-sm-3 col-6">
+                <button onclick="setPresetBalance(500000)" class="btn btn-sm btn-outline-info w-100 py-2">
+                  ₹5,00,000 (VIP)
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Payment Modes Drawer -->
+            <h6 class="fw-bold text-dark mb-2"><i class="fas fa-bolt text-warning me-2"></i>UPI Payment Methods Available:</h6>
+            <div class="row g-2">
+              <div class="col-md-3 col-6">
+                <a href="/transaction?mode=mobile" class="btn btn-light border w-100 text-start p-2">
+                  <i class="fas fa-mobile-screen text-primary fs-5 d-block mb-1"></i>
+                  <strong class="small d-block">Pay Mobile</strong>
+                  <span class="text-muted" style="font-size: 0.72rem;">To Contact #</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-6">
+                <a href="/transaction?mode=self" class="btn btn-light border w-100 text-start p-2">
+                  <i class="fas fa-building-columns text-success fs-5 d-block mb-1"></i>
+                  <strong class="small d-block">Self Transfer</strong>
+                  <span class="text-muted" style="font-size: 0.72rem;">To Own Bank</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-6">
+                <a href="/transaction?mode=wallet" class="btn btn-light border w-100 text-start p-2">
+                  <i class="fas fa-wallet text-info fs-5 d-block mb-1"></i>
+                  <strong class="small d-block">SecureUPI Wallet</strong>
+                  <span class="text-muted" style="font-size: 0.72rem;">Digital Cash</span>
+                </a>
+              </div>
+              <div class="col-md-3 col-6">
+                <a href="/transaction?mode=vpa" class="btn btn-light border w-100 text-start p-2">
+                  <i class="fas fa-qrcode text-warning fs-5 d-block mb-1"></i>
+                  <strong class="small d-block">UPI ID / QR</strong>
+                  <span class="text-muted" style="font-size: 0.72rem;">VPA Payment</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Linked Bank Accounts & Wallet Details -->
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card fin-card p-3 h-100 shadow-sm border-start border-4 border-primary">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <span class="badge bg-primary-subtle text-primary mb-1">Primary Account</span>
+              <h6 class="fw-bold mb-0">State Bank of India</h6>
+              <div class="small text-muted">Savings Account</div>
+            </div>
+            <i class="fas fa-building-columns text-primary fs-3"></i>
+          </div>
+          <div class="font-monospace fw-bold fs-5 my-2" id="primaryAccNumber">**** 4829</div>
+          <div class="d-flex justify-content-between small text-muted pt-2 border-top">
+            <span>IFSC: SBIN0001234</span>
+            <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card fin-card p-3 h-100 shadow-sm border-start border-4 border-success">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <span class="badge bg-success-subtle text-success mb-1">Secondary Account</span>
+              <h6 class="fw-bold mb-0">ICICI Bank Ltd</h6>
+              <div class="small text-muted">Salary Account (For Self-Transfer)</div>
+            </div>
+            <i class="fas fa-building-columns text-success fs-3"></i>
+          </div>
+          <div class="font-monospace fw-bold fs-5 my-2">**** 8892</div>
+          <div class="d-flex justify-content-between small text-muted pt-2 border-top">
+            <span>IFSC: ICIC0005678</span>
+            <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>Linked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card fin-card p-3 h-100 shadow-sm border-start border-4 border-info">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <div>
+              <span class="badge bg-info-subtle text-info mb-1">Digital Wallet</span>
+              <h6 class="fw-bold mb-0">SecureUPI Wallet</h6>
+              <div class="small text-muted">Zero PIN Instant Micro-Payments</div>
+            </div>
+            <i class="fas fa-wallet text-info fs-3"></i>
+          </div>
+          <div class="font-monospace fw-bold fs-5 my-2" id="walletAccId">WAL-0001</div>
+          <div class="d-flex justify-content-between small text-muted pt-2 border-top">
+            <span>Limit: ₹2,00,000</span>
+            <span class="text-success fw-bold"><i class="fas fa-shield-check me-1"></i>Secured</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Check Balance Interactive Modal -->
+  <div class="modal fade" id="checkBalanceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-shield-halved text-success me-2"></i>Check Account Balance
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          
+          <div id="pinEntryStep">
+            <div class="brand-logo-icon mx-auto mb-3" style="width: 50px; height: 50px;">
+              <i class="fas fa-key"></i>
+            </div>
+            <h5 class="fw-bold text-dark mb-1">Enter 4 or 6-digit UPI PIN</h5>
+            <p class="text-muted small mb-3">Simulated secure PIN verification (Default Demo PIN: <strong class="text-primary">1234</strong>)</p>
+
+            <div class="mb-4 d-flex justify-content-center">
+              <input type="password" id="upiPinInput" class="form-control text-center fs-3 font-monospace" style="max-width: 220px; letter-spacing: 8px;" maxlength="6" placeholder="••••" autofocus>
+            </div>
+
+            <button type="button" onclick="verifyAndShowBalance()" class="btn btn-fin-primary w-100 py-2 fw-semibold">
+              <i class="fas fa-lock-open me-2"></i>Verify &amp; View Balance
+            </button>
+          </div>
+
+          <div id="balanceResultStep" style="display: none;">
+            <div class="p-3 bg-success-subtle border border-success-subtle rounded-3 text-center mb-3">
+              <div class="text-success small fw-bold text-uppercase mb-1"><i class="fas fa-check-circle me-1"></i>Verified Available Balance</div>
+              <h2 id="modalRevealedBalance" class="display-5 fw-bold text-success mb-1">₹0.00</h2>
+              <div class="small text-muted" id="modalBankDetails">State Bank of India (**** 4829)</div>
+            </div>
+
+            <div class="small text-muted mb-3" id="modalTimestamp">Checked just now</div>
+            <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">Done</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <!-- My Personal QR Code Modal (Receive Money) -->
+  <div class="modal fade" id="myQrCodeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-dark text-white">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-qrcode text-success me-2"></i>My Personal UPI QR Code
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <div class="p-3 bg-white rounded-3 border shadow-sm d-inline-block mb-3">
+            <img id="myQrCodeImg" src="" alt="My UPI QR Code" class="img-fluid rounded" style="width: 220px; height: 220px; object-fit: contain;">
+          </div>
+          <h5 id="myQrUserName" class="fw-bold text-dark mb-1">User Name</h5>
+          <div class="badge bg-primary-subtle text-primary font-monospace fs-6 px-3 py-1 mb-3" id="myQrVpa">user@secureupi</div>
+          <p class="text-muted small mb-3">Scan this QR code from any UPI app (GPay, PhonePe, Paytm, BHIM) to receive money instantly into your Secure UPI account.</p>
+
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-outline-primary btn-sm" onclick="copyMyUpiId()">
+              <i class="fas fa-copy me-1"></i> Copy UPI ID
+            </button>
+            <a id="myQrDownloadBtn" href="#" target="_blank" class="btn btn-fin-primary btn-sm">
+              <i class="fas fa-download me-1"></i> Save QR Code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-custom text-center">
+    <div class="container small text-muted">
+      Secure UPI Academic FinTech System &copy; 2026 | Real-Time Machine Learning Transaction Security
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!AuthStore.isAuthenticated()) {
+        window.location.href = '/login';
+        return;
+      }
+      await loadProfilePageData();
+      setupProfileForms();
+    });
+
+    async function loadProfilePageData() {
+      try {
+        const data = await API.getProfile();
+        const user = data.user;
+        const account = data.account;
+
+        document.getElementById('profNameDisplay').textContent = user.name;
+        document.getElementById('profEmailDisplay').textContent = user.email;
+        document.getElementById('profUpiVpaDisplay').textContent = data.upi_vpa || `${user.phone}@secureupi`;
+
+        document.getElementById('profNameInput').value = user.name;
+        document.getElementById('profPhoneInput').value = user.phone;
+        document.getElementById('profEmailInput').value = user.email;
+
+        if (account) {
+          const balance = account.balance;
+          document.querySelectorAll('.user-balance-value').forEach(el => el.textContent = UI.formatCurrency(balance));
+          document.getElementById('customBalanceInput').value = balance;
+          if (document.getElementById('primaryAccNumber')) {
+            document.getElementById('primaryAccNumber').textContent = account.account_number_masked;
+          }
+        }
+        if (data.wallet && document.getElementById('walletAccId')) {
+          document.getElementById('walletAccId').textContent = data.wallet.wallet_id;
+        }
+      } catch (err) {
+        console.error('Failed to load profile data:', err);
+        UI.showToast('Failed to load profile: ' + err.message, 'danger');
+      }
+    }
+
+    function setupProfileForms() {
+      // 1. Profile update
+      const pForm = document.getElementById('profileUpdateForm');
+      if (pForm) {
+        pForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('profNameInput').value.trim();
+          const phone = document.getElementById('profPhoneInput').value.trim();
+          try {
+            await API.updateProfile({ name, phone });
+            UI.showToast('Profile information updated successfully!', 'success');
+            await loadProfilePageData();
+          } catch (err) {
+            UI.showToast('Failed to update profile: ' + err.message, 'danger');
+          }
+        });
+      }
+
+      // 2. Custom Balance update
+      const bForm = document.getElementById('balanceUpdateForm');
+      if (bForm) {
+        bForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const amount = parseFloat(document.getElementById('customBalanceInput').value);
+          await setPresetBalance(amount);
+        });
+      }
+    }
+
+    async function setPresetBalance(amount) {
+      if (amount < 0) {
+        UI.showToast('Balance cannot be negative.', 'warning');
+        return;
+      }
+      try {
+        const res = await API.request('/auth/balance', { method: 'POST', body: { balance: amount } });
+        UI.showToast(`Account balance updated to ${UI.formatCurrency(res.new_balance)}!`, 'success');
+        await loadProfilePageData();
+      } catch (err) {
+        UI.showToast('Failed to update balance: ' + err.message, 'danger');
+      }
+    }
+
+    // Check Balance Modal functions
+    function openCheckBalanceModal() {
+      document.getElementById('pinEntryStep').style.display = 'block';
+      document.getElementById('balanceResultStep').style.display = 'none';
+      document.getElementById('upiPinInput').value = '';
+      const modal = new bootstrap.Modal(document.getElementById('checkBalanceModal'));
+      modal.show();
+    }
+
+    async function verifyAndShowBalance() {
+      const pin = document.getElementById('upiPinInput').value.trim();
+      if (!pin || pin.length < 4) {
+        UI.showToast('Please enter your 4 or 6 digit UPI PIN.', 'warning');
+        return;
+      }
+      try {
+        const res = await API.request('/auth/check-balance', { method: 'POST', body: { upi_pin: pin } });
+        document.getElementById('modalRevealedBalance').textContent = UI.formatCurrency(res.available_balance);
+        document.getElementById('modalBankDetails').textContent = `${res.bank_name} (${res.account_number_masked})`;
+        document.getElementById('modalTimestamp').textContent = `Verified at ${UI.formatDate(res.checked_at)}`;
+        document.getElementById('pinEntryStep').style.display = 'none';
+        document.getElementById('balanceResultStep').style.display = 'block';
+        UI.showToast('UPI PIN verified. Available balance displayed.', 'success');
+      } catch (err) {
+        UI.showToast(err.message || 'Invalid UPI PIN.', 'danger');
+      }
+    }
+
+    // QR Code Modal functions
+    function openMyQrModal() {
+      const user = AuthStore.getUser();
+      if (!user) return;
+      
+      const vpa = `${user.phone || '9876543210'}@secureupi`;
+      const name = user.name || 'Secure UPI User';
+      const qrData = `upi://pay?pa=${encodeURIComponent(vpa)}&pn=${encodeURIComponent(name)}&cu=INR`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrData)}`;
+
+      const modalName = document.getElementById('myQrUserName');
+      const modalVpa = document.getElementById('myQrVpa');
+      const modalImg = document.getElementById('myQrCodeImg');
+      const downloadLink = document.getElementById('myQrDownloadBtn');
+
+      if (modalName) modalName.textContent = name;
+      if (modalVpa) modalVpa.textContent = vpa;
+      if (modalImg) modalImg.src = qrUrl;
+      if (downloadLink) {
+        downloadLink.href = qrUrl;
+        downloadLink.download = `${name.replace(/\s+/g, '_')}_UPI_QR.png`;
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('myQrCodeModal'));
+      modal.show();
+    }
+
+    function copyMyUpiId() {
+      const user = AuthStore.getUser();
+      const vpa = user ? `${user.phone || '9876543210'}@secureupi` : 'demo@secureupi';
+      navigator.clipboard.writeText(vpa).then(() => {
+        UI.showToast(`Copied UPI ID: ${vpa} to clipboard!`, 'success');
+      }).catch(() => {
+        UI.showToast(`UPI ID: ${vpa}`, 'info');
+      });
+    }
+  </script>
+</body>
+</html>

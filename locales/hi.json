@@ -1,0 +1,12 @@
+{
+  "login": "लॉगिन",
+  "register": "रजिस्टर",
+  "home": "होम",
+  "dashboard": "डैशबोर्ड",
+  "pay": "भुगतान",
+  "transactions": "लेन-देन",
+  "alerts": "अलर्ट",
+  "profile": "प्रोफ़ाइल",
+  "settings": "सेटिंग्स",
+  "voiceGuide": "वॉइस गाइड"
+}
