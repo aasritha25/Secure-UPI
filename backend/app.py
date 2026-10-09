@@ -125,9 +125,20 @@ def create_app(config_class=Config):
     # General Static Fallback Handler
     @app.route('/<path:filename>')
     def serve_static(filename):
+        # Don't intercept API routes
+        if filename.startswith('api/') or filename.startswith('api'):
+            return jsonify({'error': 'Resource not found', 'status_code': 404}), 404
+
+        # Check exact filename (e.g. css/styles.css, js/config.js)
         file_path = os.path.join(FRONTEND_DIR, filename)
-        if os.path.exists(file_path):
+        if os.path.isfile(file_path):
             return send_from_directory(FRONTEND_DIR, filename)
+
+        # Check filename with .html extension (e.g. /login -> login.html, /register -> register.html)
+        html_path = file_path + '.html'
+        if os.path.isfile(html_path):
+            return send_from_directory(FRONTEND_DIR, filename + '.html')
+
         return send_from_directory(FRONTEND_DIR, 'index.html')
 
     # Global Error Handlers
